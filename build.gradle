@@ -1,0 +1,77 @@
+import org.gradle.plugins.ide.eclipse.model.Facet
+apply plugin: 'maven'
+apply plugin: 'java'
+apply plugin: 'war'
+apply plugin: 'eclipse-wtp'
+ 
+sourceCompatibility = 1.7   // 设置 JDK 版本
+
+webAppDirName = 'WebContent'    // 设置 WebApp 根目录
+
+sourceSets.main.java.srcDir 'src/main/java'
+sourceSets.main.resources.srcDir 'src/main/resources'
+sourceSets.test.java.srcDir 'src/test/java'
+sourceSets.test.resources.srcDir 'src/test/resources'
+
+def spring_version='4.2.1.RELEASE'
+def slf4j_version='1.7.12'
+def lucene_version='4.3.1' 
+
+// 设置 maven 库地址
+repositories {  
+    maven { url 'http://192.168.161.195:8090/nexus/content/groups/public/' } // 自定义库地址
+	mavenCentral() // 中央库
+}
+ 
+// 设置依赖
+dependencies {
+    providedCompile 'javax.servlet:servlet-api:2.5' // 编译期
+    providedRuntime 'javax.servlet:jstl:1.2'    // 运行时
+    
+    compile 'org.springframework.data:spring-data-solr:1.5.0.RELEASE'
+    compile 'org.apache.solr:solr-solrj:5.2.1'
+    
+    compile 'org.springframework:spring-context:'+spring_version
+    compile 'org.springframework:spring-orm:'+spring_version
+    compile 'org.springframework:spring-tx:'+spring_version
+    compile 'org.springframework:spring-web:'+spring_version
+    compile 'org.springframework:spring-webmvc:'+spring_version
+    compile 'org.springframework.data:spring-data-jpa:1.9.0.RELEASE'
+    compile 'org.slf4j:slf4j-log4j12:'+slf4j_version
+    compile 'javax.servlet:javax.servlet-api:3.1.0'
+    compile 'net.minidev:json-smart:2.2'
+    compile 'com.google.code.gson:gson:2.3.1'
+    compile 'net.sf.json-lib:json-lib:2.4:jdk15'
+    compile 'com.alibaba:fastjson:1.2.7'
+    compile 'redis.clients:jedis:2.7.3'
+    compile 'org.hibernate:hibernate-core:5.0.1.Final'
+    compile 'org.mybatis:mybatis:3.3.0'
+    compile 'org.mybatis:mybatis-spring:1.2.3'
+    compile 'org.springframework.amqp:spring-rabbit:1.4.5.RELEASE'
+    compile 'org.apache.lucene:lucene-core:'+lucene_version
+    compile 'org.apache.lucene:lucene-demo:'+lucene_version
+    compile 'com.chenlb.mmseg4j:mmseg4j-core:1.9.1'
+    compile 'com.chenlb.mmseg4j:mmseg4j-analysis:1.9.1'
+	compile 'com.belerweb:pinyin4j:2.5.0'
+	compile 'it.unimi.di:mg4j-big:5.4.1'
+	compile 'it.unimi.di:mg4j:5.2'
+}
+ 
+ 
+// 设置 Project Facets
+eclipse {
+    wtp {
+        facet {
+            facet name: 'jst.web', type: Facet.FacetType.fixed
+            facet name: 'wst.jsdt.web', type: Facet.FacetType.fixed
+            facet name: 'jst.java', type: Facet.FacetType.fixed
+            facet name: 'jst.web', version: '3.0'
+            facet name: 'jst.java', version: '1.7'
+            facet name: 'wst.jsdt.web', version: '1.0'
+        }
+        
+        component{
+        	contextPath='liberty'	// 设置工程访问地址
+        }
+    }
+}

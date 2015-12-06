@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:cache="http://www.springframework.org/schema/cache"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+       http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd"
+	default-lazy-init="false">
+
+	<!-- 在代码中获取properties文件的键值 -->
+	<util:properties id="config" location="classpath:config.properties">
+	</util:properties>
+
+	<!-- 全局配置 -->
+	<bean
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations" value="classpath:config.properties" />
+	</bean>
+
+	<!-- 这里不扫描标注为@Controller注解的SpringMVC控制类，仅扫描标注为@Service、@Repository的类 -->
+	<context:component-scan base-package="com.liberty"
+		use-default-filters="false">
+		<context:include-filter type="annotation"
+			expression="org.springframework.stereotype.Service" />
+		<context:include-filter type="annotation"
+			expression="org.springframework.stereotype.Repository" />
+	</context:component-scan>
+
+	<!-- 这里启用Apache Solr全文检索服务 -->
+	<bean id="httpSolrServer" class="com.liberty.solr.SolrConfig">
+		<constructor-arg index="0">
+			<value>${zkHost}</value>
+		</constructor-arg>
+		<constructor-arg index="1">
+			<value>${solrCloud}</value>
+		</constructor-arg>
+	</bean>
+
+</beans>
